@@ -1,0 +1,7 @@
+temp/
+
+.vscode
+
+!temp/this-is-temp-folder.txt
+
+*__pycache__
