@@ -1,6 +1,6 @@
 # FPGA - DDS control system
 
-An control system designed for signal generating.
+A control system designed for signal generating. Support AD9910 DDS Chip.
 
 ## system overview
 
