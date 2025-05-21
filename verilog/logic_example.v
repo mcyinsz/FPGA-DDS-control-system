@@ -1,28 +1,9 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 2024/11/11 21:12:28
-// Design Name: 
-// Module Name: led_output
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
 
 module instruction_counter #(
     parameter output_width = 8,
     parameter Num_cycles_for_instruction=10,
-    parameter Num_instructions=66583
+    parameter Num_instructions=66753
 )
 (
     input clk,
