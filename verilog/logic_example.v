@@ -2,41 +2,62 @@
 
 module instruction_counter #(
     parameter output_width = 8,
-    parameter Num_cycles_for_instruction=10,
-    parameter Num_instructions=66753
+    parameter Num_cycles_for_instruction = 10,
+    parameter Num_instructions = 66753,
+    parameter Delay_cycles = 0
 )
 (
     input clk,
     input reset,
-    output [output_width-1:0]addra_wire
+    output [output_width-1:0] addra_wire
 );
-    reg [30:0]count;
+    reg [30:0] count;
+    reg [31:0] delay_counter;
+    reg delay_done;
+    reg [16:0] addra;
+    
     always @(posedge clk or posedge reset) begin
-        if (count == Num_cycles_for_instruction || reset) begin
-            count <= 0;
+        if (reset) begin
+            delay_counter <= 0;
+            delay_done <= (Delay_cycles == 0); 
+        end else begin
+            if (Delay_cycles == 0) begin
+                delay_done <= 1'b1;
+            end else if (!delay_done) begin
+                if (delay_counter == Delay_cycles - 1) begin
+                    delay_done <= 1'b1;
+                end
+                delay_counter <= delay_counter + 1;
+            end
         end
-        else begin
-            count <= count+1;
+    end
+
+    always @(posedge clk or posedge reset) begin
+        if (reset) begin
+            count <= 0;
+        end else if (delay_done) begin
+            if (count == Num_cycles_for_instruction) begin
+                count <= 0;
+            end else begin
+                count <= count + 1;
+            end
+        end else begin
+            count <= 0;
         end
     end
     
     wire clka;
-    assign clka = count == Num_cycles_for_instruction;
+    assign clka = (delay_done && (count == Num_cycles_for_instruction));
     
-    reg [16:0]addra;
     always @(posedge clka or posedge reset) begin
         if (reset) begin
-            addra<=0;
-        end 
-        else begin
-            if (addra<Num_instructions) begin
-                addra <= addra+1;
-            end
-            else begin
-                addra <= addra;
+            addra <= 0;
+        end else if (delay_done) begin
+            if (addra < Num_instructions) begin
+                addra <= addra + 1;
             end
         end
-   end
+    end
    
    assign addra_wire = addra;
    
@@ -58,23 +79,25 @@ module output_with_assistant(
     wire [16:0]addrb;
     
     instruction_counter #(
-        .output_width(17),  // 使用 .参数名(值) 的语法
+        .output_width(17),  
         .Num_cycles_for_instruction(10),
-        .Num_instructions(66583)
+        .Num_instructions(66583),
+        .Delay_cycles(0)
     ) ic1 (
         .clk(clk),
         .reset(reset),
-        .addra_wire(addra)  // 信号连接
+        .addra_wire(addra)  
     );
     
     instruction_counter #(
-        .output_width(17),  // 使用 .参数名(值) 的语法
+        .output_width(17),  
         .Num_cycles_for_instruction(10),
-        .Num_instructions(66583)
+        .Num_instructions(66583),
+        .Delay_cycles(0)
     ) ic2 (
         .clk(clk),
         .reset(reset),
-        .addra_wire(addrb)  // 信号连接
+        .addra_wire(addrb)
     );
    
 
