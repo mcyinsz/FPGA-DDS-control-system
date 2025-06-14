@@ -36,7 +36,7 @@ module instruction_counter #(
         if (reset) begin
             count <= 0;
         end else if (delay_done) begin
-            if (count == Num_cycles_for_instruction) begin
+            if (count == Num_cycles_for_instruction - 1) begin
                 count <= 0;
             end else begin
                 count <= count + 1;
@@ -47,15 +47,15 @@ module instruction_counter #(
     end
     
     wire clka;
-    assign clka = (delay_done && (count == Num_cycles_for_instruction));
+    assign clka = (delay_done && (count == Num_cycles_for_instruction - 1));
     
-    always @(posedge clka or posedge reset) begin
+    always @(posedge clk or posedge reset) begin
         if (reset) begin
             addra <= 0;
-        end else if (delay_done) begin
-            if (addra < Num_instructions) begin
-                addra <= addra + 1;
-            end
+        end else if (delay_done && clka_en) begin
+            addra <= (addra < Num_instructions-1) ? addra + 1 : addra;
+        end else begin
+            addra <= addra;
         end
     end
    
