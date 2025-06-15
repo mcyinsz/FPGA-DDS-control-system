@@ -52,7 +52,7 @@ module instruction_counter #(
     always @(posedge clk or posedge reset) begin
         if (reset) begin
             addra <= 0;
-        end else if (delay_done && clka_en) begin
+        end else if (delay_done && clka) begin
             addra <= (addra < Num_instructions-1) ? addra + 1 : addra;
         end else begin
             addra <= addra;
